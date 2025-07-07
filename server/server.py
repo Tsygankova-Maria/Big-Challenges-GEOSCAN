@@ -21,23 +21,16 @@ class UserData(BaseModel):
 
 @app.post("/api/data")
 async def generate_data(data: UserData):
-    # Генерируем случайное число
     random_num = random.randint(1, 100)
-    
-    # Логируем запрос
     print(f"{datetime.now()}: Получен текст '{data.user_text}', отправлено число {random_num}")
-    
     return {
         "random_number": random_num,
         "received_text": data.user_text,
         "timestamp": datetime.now().isoformat()
     }
-
-# Модель для валидации входящих данных
 class SliderData(BaseModel):
     slider_name: str  
-    value: conint(ge=-90, le=255)  # Значение от 0 до 100
-# Хранилище состояний (можно заменить на БД)
+    value: conint(ge=-90, le=255)  
 slider_states = {
     "slider1": 50,
     "slider2": 50
@@ -47,13 +40,8 @@ async def update_slider(data: SliderData):
     # Проверяем, что слайдер существует
     if data.slider_name not in slider_states:
         raise HTTPException(status_code=400, detail="Неизвестный слайдер")
-    
-    # Обновляем значение
     slider_states[data.slider_name] = data.value
-    
-    # Логируем в консоль сервера
     print(f"Обновлено: {data.slider_name} = {data.value}")
-    
     return {
         "status": "success",
         "message": f"Слайдер {data.slider_name} установлен на {data.value}",
